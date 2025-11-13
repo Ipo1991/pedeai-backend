@@ -8,12 +8,15 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { Product } from './products/entities/product.entity';
 import { Address } from './addresses/entities/address.entity';
 import { Order } from './orders/entities/order.entity';
+import { Payment } from './payments/entities/payment.entity';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { ProductsModule } from './products/products.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { OrdersModule } from './orders/orders.module';
+import { PaymentsModule } from './payments/payments.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
@@ -28,7 +31,7 @@ import { OrdersModule } from './orders/orders.module';
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_DATABASE || 'pedeai',
-      entities: [User, Restaurant, Product, Address, Order],
+      entities: [User, Restaurant, Product, Address, Order, Payment],
       synchronize: false, // Use migrations in production
       logging: process.env.NODE_ENV === 'development',
     }),
@@ -38,6 +41,8 @@ import { OrdersModule } from './orders/orders.module';
     ProductsModule,
     AddressesModule,
     OrdersModule,
+    PaymentsModule,
+    StatisticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

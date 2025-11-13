@@ -42,6 +42,9 @@ export class AddressesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
+    console.log('🔄 PATCH /addresses/:id called');
+    console.log('   ID:', id);
+    console.log('   Body:', JSON.stringify(updateAddressDto, null, 2));
     return this.addressesService.update(id, updateAddressDto);
   }
 

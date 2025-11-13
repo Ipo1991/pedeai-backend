@@ -7,16 +7,19 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { AdminGuard } from '../auth/admin.guard';
 
 @Controller('restaurants')
 export class RestaurantsController {
   constructor(private readonly restaurantsService: RestaurantsService) {}
 
   @Post()
+  @UseGuards(AdminGuard)
   create(@Body() createRestaurantDto: CreateRestaurantDto) {
     return this.restaurantsService.create(createRestaurantDto);
   }
@@ -32,6 +35,7 @@ export class RestaurantsController {
   }
 
   @Patch(':id')
+  @UseGuards(AdminGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
@@ -40,6 +44,7 @@ export class RestaurantsController {
   }
 
   @Delete(':id')
+  @UseGuards(AdminGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.restaurantsService.remove(id);
   }

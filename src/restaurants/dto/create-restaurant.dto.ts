@@ -29,8 +29,8 @@ export class CreateRestaurantDto {
 
   @IsNumber()
   @Min(0)
-  @IsNotEmpty({ message: 'Taxa de entrega é obrigatória' })
-  delivery_fee: number;
+  @IsOptional()
+  delivery_fee?: number;
 
   @IsOptional()
   @IsString()

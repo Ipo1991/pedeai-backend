@@ -122,7 +122,7 @@ export class OrdersService {
     // Regra 18: Validar transições de status permitidas
     if (updateOrderDto.status) {
       const validTransitions: Record<OrderStatus, OrderStatus[]> = {
-        [OrderStatus.PENDING]: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED],
+        [OrderStatus.PENDING]: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED, OrderStatus.DELIVERED], // Adicionado DELIVERED para demo
         [OrderStatus.CONFIRMED]: [OrderStatus.PREPARING, OrderStatus.CANCELLED],
         [OrderStatus.PREPARING]: [OrderStatus.DELIVERING, OrderStatus.CANCELLED],
         [OrderStatus.DELIVERING]: [OrderStatus.DELIVERED],

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
@@ -16,7 +20,7 @@ export class ProductsService {
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
-    // Regra 9: Produto deve pertencer a restaurante existente
+    // Validar que o restaurante existe
     const restaurant = await this.restaurantRepository.findOne({
       where: { id: createProductDto.restaurant_id },
     });
@@ -25,11 +29,24 @@ export class ProductsService {
       throw new NotFoundException('Restaurante não encontrado');
     }
 
+    // Validar nome único dentro do restaurante
+    const existing = await this.productRepository.findOne({
+      where: {
+        name: createProductDto.name,
+        restaurant: { id: createProductDto.restaurant_id },
+      },
+    });
+
+    if (existing) {
+      throw new ConflictException(
+        'Produto com este nome já existe neste restaurante',
+      );
+    }
+
     const product = this.productRepository.create({
       ...createProductDto,
       restaurant,
     });
-
     return this.productRepository.save(product);
   }
 
@@ -41,7 +58,7 @@ export class ProductsService {
   }
 
   async findByRestaurant(restaurantId: number): Promise<Product[]> {
-    // Regra 10: Listar apenas produtos disponíveis por padrão
+    // Listar apenas produtos disponíveis
     return this.productRepository.find({
       where: { restaurant: { id: restaurantId }, isAvailable: true },
       order: { name: 'ASC' },
@@ -61,20 +78,26 @@ export class ProductsService {
     return product;
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto): Promise<Product> {
+  async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
     const product = await this.findOne(id);
 
-    // Regra 11: Validar restaurante se alterado
-    if (updateProductDto.restaurant_id) {
-      const restaurant = await this.restaurantRepository.findOne({
-        where: { id: updateProductDto.restaurant_id },
+    // Se alterar nome, validar unicidade dentro do restaurante
+    if (updateProductDto.name && updateProductDto.name !== product.name) {
+      const existing = await this.productRepository.findOne({
+        where: {
+          name: updateProductDto.name,
+          restaurant: { id: product.restaurant.id },
+        },
       });
 
-      if (!restaurant) {
-        throw new NotFoundException('Restaurante não encontrado');
+      if (existing) {
+        throw new ConflictException(
+          'Produto com este nome já existe neste restaurante',
+        );
       }
-
-      product.restaurant = restaurant;
     }
 
     Object.assign(product, updateProductDto);

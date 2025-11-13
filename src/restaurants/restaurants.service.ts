@@ -17,7 +17,7 @@ export class RestaurantsService {
   ) {}
 
   async create(createRestaurantDto: CreateRestaurantDto): Promise<Restaurant> {
-    // Regra 6: Nome de restaurante único
+    // Validar nome único
     const existing = await this.restaurantRepository.findOne({
       where: { name: createRestaurantDto.name },
     });
@@ -31,7 +31,7 @@ export class RestaurantsService {
   }
 
   async findAll(): Promise<Restaurant[]> {
-    // Regra 7: Listar apenas restaurantes ativos por padrão
+    // Listar apenas restaurantes ativos
     return this.restaurantRepository.find({
       where: { isActive: true },
       relations: ['products'],
@@ -58,7 +58,7 @@ export class RestaurantsService {
   ): Promise<Restaurant> {
     const restaurant = await this.findOne(id);
 
-    // Regra 8: Se alterar nome, validar unicidade
+    // Se alterar nome, validar unicidade
     if (
       updateRestaurantDto.name &&
       updateRestaurantDto.name !== restaurant.name

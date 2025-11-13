@@ -69,13 +69,28 @@ export class AddressesService {
 
   async update(id: number, updateAddressDto: UpdateAddressDto): Promise<Address> {
     const address = await this.findOne(id);
+    
+    console.log('🔄 Updating address:', id);
+    console.log('📦 Update data:', updateAddressDto);
+    console.log('📍 Current address isDefault:', address.isDefault);
 
     // Regra 13: Ao definir como padrão, desmarcar outros do mesmo usuário
-    if (updateAddressDto.is_default) {
-      await this.addressRepository.update(
-        { user: { id: address.user.id }, isDefault: true },
-        { isDefault: false },
-      );
+    if (updateAddressDto.is_default === true) {
+      console.log('✅ Marking as default, will unmark others');
+      // Busca todos os endereços padrão do usuário e desmarca
+      const otherAddresses = await this.addressRepository.find({
+        where: { user: { id: address.user.id }, isDefault: true },
+      });
+      
+      console.log('📋 Found default addresses:', otherAddresses.length);
+      
+      for (const otherAddress of otherAddresses) {
+        if (otherAddress.id !== id) {
+          console.log('❌ Unmarking address:', otherAddress.id);
+          otherAddress.isDefault = false;
+          await this.addressRepository.save(otherAddress);
+        }
+      }
     }
 
     // Mapear campos explicitamente e converter is_default -> isDefault
@@ -88,7 +103,9 @@ export class AddressesService {
     if (updateAddressDto.zip !== undefined) address.zip = updateAddressDto.zip;
     if (updateAddressDto.is_default !== undefined) address.isDefault = !!updateAddressDto.is_default;
 
-    return this.addressRepository.save(address);
+    const saved = await this.addressRepository.save(address);
+    console.log('💾 Address saved with isDefault:', saved.isDefault);
+    return saved;
   }
 
   async remove(id: number): Promise<void> {

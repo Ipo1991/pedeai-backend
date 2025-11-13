@@ -25,7 +25,7 @@ async function seed() {
 
   try {
     // Criar usuário de teste
-    const hashedPassword = await bcrypt.hash('123456', 10);
+    const hashedPassword = await bcrypt.hash('Teste@123', 10);
     const userResult = await queryRunner.query(
       `INSERT INTO users (email, password, name, phone, created_at, updated_at) 
        VALUES ($1, $2, $3, $4, NOW(), NOW()) 
@@ -35,6 +35,18 @@ async function seed() {
     );
     const userId = userResult.length > 0 ? userResult[0].id : null;
     console.log('✅ Usuário de teste criado/existente');
+
+    // Criar usuário admin
+    const hashedAdminPassword = await bcrypt.hash('Admin@123', 10);
+    const adminResult = await queryRunner.query(
+      `INSERT INTO users (email, password, name, phone, is_admin, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) 
+       ON CONFLICT (email) DO UPDATE SET is_admin = EXCLUDED.is_admin
+       RETURNING id`,
+      ['admin@pedeai.com', hashedAdminPassword, 'Administrador', '48999999999', true],
+    );
+    const adminId = adminResult.length > 0 ? adminResult[0].id : null;
+    console.log('✅ Usuário admin criado/existente');
 
     // Criar endereço de teste
     if (userId) {

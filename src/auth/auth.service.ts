@@ -20,7 +20,7 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    // Regra 1: Email único
+
     const existingUser = await this.userRepository.findOne({
       where: { email: registerDto.email },
     });
@@ -29,21 +29,21 @@ export class AuthService {
       throw new ConflictException('Email já cadastrado');
     }
 
-    // Regra 2: Hash de senha com bcrypt (min 10 rounds)
+  
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-    // Normalizações de entrada
+  
     const normalizePhone = (phone?: string) =>
       phone ? phone.replace(/\D/g, '') : undefined;
     const normalizeBirthDate = (birth?: string) => {
       if (!birth) return undefined;
-      // Aceita formatos dd/mm/aaaa ou yyyy-mm-dd
+     
       if (/^\d{2}\/\d{2}\/\d{4}$/.test(birth)) {
         const [d, m, y] = birth.split('/');
-        return `${y}-${m}-${d}`; // ISO
+        return `${y}-${m}-${d}`; 
       }
-      if (/^\d{4}-\d{2}-\d{2}$/.test(birth)) return birth; // já ISO
-      return undefined; // formato inválido é ignorado
+      if (/^\d{4}-\d{2}-\d{2}$/.test(birth)) return birth; 
+      return undefined; 
     };
 
     const user = this.userRepository.create({
@@ -56,11 +56,12 @@ export class AuthService {
 
     await this.userRepository.save(user);
 
-    // Não retornar senha
+  
     const { password, ...result } = user;
     return {
       ...result,
       access_token: this.generateToken(user),
+      isAdmin: user.isAdmin,
     };
   }
 
@@ -73,7 +74,7 @@ export class AuthService {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    // Regra 3: Validar senha com bcrypt
+
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
       user.password,
@@ -87,11 +88,16 @@ export class AuthService {
     return {
       ...result,
       access_token: this.generateToken(user),
+      isAdmin: user.isAdmin,
     };
   }
 
   private generateToken(user: User): string {
-    const payload = { email: user.email, sub: user.id };
+    const payload = { 
+      email: user.email, 
+      sub: user.id,
+      isAdmin: user.isAdmin 
+    };
     return this.jwtService.sign(payload);
   }
 

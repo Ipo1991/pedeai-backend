@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Order } from '../../orders/entities/order.entity';
 import { Address } from '../../addresses/entities/address.entity';
+import { Payment } from '../../payments/entities/payment.entity';
 
 @Entity('users')
 export class User {
@@ -29,6 +30,9 @@ export class User {
   @Column({ nullable: true, name: 'birth_date' })
   birthDate: string;
 
+  @Column({ default: false, name: 'is_admin' })
+  isAdmin: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
@@ -40,4 +44,7 @@ export class User {
 
   @OneToMany(() => Address, (address) => address.user)
   addresses: Address[];
+
+  @OneToMany(() => Payment, (payment) => payment.user)
+  payments: Payment[];
 }

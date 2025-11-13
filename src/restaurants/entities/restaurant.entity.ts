@@ -25,7 +25,7 @@ export class Restaurant {
   @Column({ name: 'delivery_time' })
   deliveryTime: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, name: 'delivery_fee' })
+  @Column({ type: 'decimal', precision: 10, scale: 2, name: 'delivery_fee', default: 0 })
   deliveryFee: number;
 
   @Column({ nullable: true })
@@ -40,6 +40,6 @@ export class Restaurant {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @OneToMany(() => Product, (product) => product.restaurant)
+  @OneToMany(() => Product, (product) => product.restaurant, { cascade: true, onDelete: 'CASCADE' })
   products: Product[];
 }
