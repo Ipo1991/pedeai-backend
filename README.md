@@ -348,28 +348,3 @@ pedeai-backend/
 ├── PedeAI.postman_collection.json
 └── README.md
 ```
-
-## 🤝 Suporte
-
-Para dúvidas ou problemas:
-1. Verifique os logs do servidor
-2. Confirme que o PostgreSQL está rodando
-3. Valide as variáveis de ambiente no `.env`
-4. Teste os endpoints com a coleção do Postman
-5. Certifique-se de que as migrações foram executadas
-
-## 📝 Notas de Desenvolvimento
-
-- O projeto usa migrações do TypeORM (não sincronização automática)
-- Todos os console.logs em `orders.service.ts` são para debugging e podem ser removidos em produção
-- O campo `neighborhood` e `complement` foram removidos dos endereços
-- A validação de telefone aceita apenas DDD 48 (Florianópolis)
-- A validação de CEP aceita apenas códigos de Florianópolis (880XXXXX)
-
-## 📝 Licença
-
-Este projeto foi desenvolvido para fins educacionais.
-
----
-
-Desenvolvido com ❤️ usando NestJS
