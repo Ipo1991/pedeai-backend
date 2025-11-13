@@ -26,15 +26,17 @@ export class OrdersService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
-    // Regra 14: Validar usuário existe
+    console.log('🛒 CREATE ORDER - DTO recebido:', JSON.stringify(createOrderDto, null, 2));
+
     const user = await this.userRepository.findOne({
       where: { id: createOrderDto.user_id },
     });
     if (!user) {
+      console.error('❌ Usuário não encontrado:', createOrderDto.user_id);
       throw new NotFoundException('Usuário não encontrado');
     }
+    console.log('✅ Usuário encontrado:', user.id, user.email);
 
-    // Regra 15: Validar restaurante existe e está ativo
     const restaurant = await this.restaurantRepository.findOne({
       where: { id: createOrderDto.restaurant_id },
     });
@@ -45,7 +47,6 @@ export class OrdersService {
       throw new BadRequestException('Restaurante não está disponível');
     }
 
-    // Regra 16: Validar todos produtos existem e pertencem ao restaurante
     const productIds = createOrderDto.items.map((item) => item.product_id);
     const products = await this.productRepository.find({
       where: productIds.map(id => ({ id })),
@@ -69,7 +70,6 @@ export class OrdersService {
       }
     }
 
-    // Regra 17: Validar total do pedido (recalcular)
     const calculatedTotal = createOrderDto.items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0,
@@ -80,6 +80,56 @@ export class OrdersService {
         `Total informado (${createOrderDto.total}) não corresponde ao calculado (${calculatedTotal})`,
       );
     }
+
+    // Regra de negócio 10: Valor mínimo de R$ 50,00 por pedido
+    console.log('💰 Validando valor mínimo. Total:', createOrderDto.total);
+    if (createOrderDto.total < 50) {
+      console.error('❌ Valor abaixo do mínimo:', createOrderDto.total);
+      throw new BadRequestException(
+        'O valor mínimo do pedido é R$ 50,00',
+      );
+    }
+    console.log('✅ Valor válido');
+
+    // Buscar pedidos anteriores do usuário
+    const userOrders = await this.orderRepository.find({
+      where: { user: { id: user.id } },
+      order: { createdAt: 'DESC' },
+    });
+
+    // Regra de negócio 11: Não pode comprar no mesmo restaurante duas vezes seguidas
+    console.log('🍽️ Validando restaurante repetido. Pedidos anteriores:', userOrders.length);
+    if (userOrders.length > 0) {
+      const lastOrder = userOrders[0];
+      console.log('Último pedido - Restaurante ID:', lastOrder.restaurantId, 'Novo pedido - Restaurante ID:', restaurant.id);
+      if (lastOrder.restaurantId === restaurant.id) {
+        console.error('❌ Tentativa de pedido no mesmo restaurante');
+        throw new BadRequestException(
+          'Você já fez um pedido neste restaurante. Escolha outro restaurante para o próximo pedido.',
+        );
+      }
+    }
+    console.log('✅ Restaurante diferente do último pedido');
+
+    // Regra de negócio 12: Máximo de 3 pedidos por dia
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const ordersToday = userOrders.filter(order => {
+      const orderDate = new Date(order.createdAt);
+      return orderDate >= today && orderDate < tomorrow;
+    });
+
+    console.log('📅 Pedidos hoje:', ordersToday.length, '/ 3');
+    if (ordersToday.length >= 3) {
+      console.error('❌ Limite de 3 pedidos por dia atingido');
+      throw new BadRequestException(
+        'Você atingiu o limite de 3 pedidos por dia. Tente novamente amanhã.',
+      );
+    }
+    console.log('✅ Limite de pedidos diário OK');
 
     const order = this.orderRepository.create({
       user,

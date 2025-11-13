@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -20,16 +21,24 @@ export class ProductsService {
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
+    console.log('🍽️ CREATE PRODUCT - DTO recebido:', JSON.stringify(createProductDto, null, 2));
+
+    // Normalizar nome: remover espaços no início e fim
+    createProductDto.name = createProductDto.name.trim();
+    console.log('📝 Nome normalizado:', createProductDto.name);
+
     // Validar que o restaurante existe
     const restaurant = await this.restaurantRepository.findOne({
       where: { id: createProductDto.restaurant_id },
     });
 
     if (!restaurant) {
+      console.error('❌ Restaurante não encontrado:', createProductDto.restaurant_id);
       throw new NotFoundException('Restaurante não encontrado');
     }
+    console.log('✅ Restaurante encontrado:', restaurant.id, restaurant.name);
 
-    // Validar nome único dentro do restaurante
+    // Regra 13: Produtos não podem ter o mesmo nome (dentro do restaurante)
     const existing = await this.productRepository.findOne({
       where: {
         name: createProductDto.name,
@@ -38,16 +47,53 @@ export class ProductsService {
     });
 
     if (existing) {
+      console.error('❌ Produto com nome duplicado:', createProductDto.name);
       throw new ConflictException(
         'Produto com este nome já existe neste restaurante',
       );
     }
+    console.log('✅ Nome do produto único');
+
+    // Regra 14: Não pode cadastrar produto por menos de R$ 10,00
+    console.log('💰 Validando preço mínimo. Preço:', createProductDto.price);
+    if (createProductDto.price < 10) {
+      console.error('❌ Preço abaixo do mínimo:', createProductDto.price);
+      throw new BadRequestException(
+        'O preço mínimo do produto é R$ 10,00',
+      );
+    }
+    console.log('✅ Preço válido');
+
+    // Regra 15: Máximo de 3 cadastros de produtos por restaurante por dia
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const productsCreatedToday = await this.productRepository
+      .createQueryBuilder('product')
+      .where('product.restaurant_id = :restaurantId', { restaurantId: restaurant.id })
+      .andWhere('product.created_at >= :today', { today })
+      .andWhere('product.created_at < :tomorrow', { tomorrow })
+      .getCount();
+
+    console.log('📅 Produtos criados hoje neste restaurante:', productsCreatedToday, '/ 3');
+    if (productsCreatedToday >= 3) {
+      console.error('❌ Limite de 3 produtos por dia atingido');
+      throw new BadRequestException(
+        'Você atingiu o limite de 3 cadastros de produtos por dia para este restaurante. Tente novamente amanhã.',
+      );
+    }
+    console.log('✅ Limite de cadastros diário OK');
 
     const product = this.productRepository.create({
       ...createProductDto,
       restaurant,
     });
-    return this.productRepository.save(product);
+    
+    const savedProduct = await this.productRepository.save(product);
+    console.log('✅ Produto criado com sucesso:', savedProduct.id, savedProduct.name);
+    return savedProduct;
   }
 
   async findAll(): Promise<Product[]> {
@@ -83,6 +129,11 @@ export class ProductsService {
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
     const product = await this.findOne(id);
+
+    // Normalizar nome se fornecido
+    if (updateProductDto.name) {
+      updateProductDto.name = updateProductDto.name.trim();
+    }
 
     // Se alterar nome, validar unicidade dentro do restaurante
     if (updateProductDto.name && updateProductDto.name !== product.name) {

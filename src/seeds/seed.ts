@@ -27,11 +27,11 @@ async function seed() {
     // Criar usuário de teste
     const hashedPassword = await bcrypt.hash('Teste@123', 10);
     const userResult = await queryRunner.query(
-      `INSERT INTO users (email, password, name, phone, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, NOW(), NOW()) 
+      `INSERT INTO users (email, password, name, phone, birth_date, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) 
        ON CONFLICT (email) DO NOTHING 
        RETURNING id`,
-      ['teste@pedeai.com', hashedPassword, 'Usuário Teste', '11999999999'],
+      ['teste@pedeai.com', hashedPassword, 'Usuário Teste', '48999999999', '1990-01-15'],
     );
     const userId = userResult.length > 0 ? userResult[0].id : null;
     console.log('✅ Usuário de teste criado/existente');
@@ -39,11 +39,11 @@ async function seed() {
     // Criar usuário admin
     const hashedAdminPassword = await bcrypt.hash('Admin@123', 10);
     const adminResult = await queryRunner.query(
-      `INSERT INTO users (email, password, name, phone, is_admin, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) 
+      `INSERT INTO users (email, password, name, phone, birth_date, is_admin, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) 
        ON CONFLICT (email) DO UPDATE SET is_admin = EXCLUDED.is_admin
        RETURNING id`,
-      ['admin@pedeai.com', hashedAdminPassword, 'Administrador', '48999999999', true],
+      ['admin@pedeai.com', hashedAdminPassword, 'Administrador', '48988888888', '1985-05-20', true],
     );
     const adminId = adminResult.length > 0 ? adminResult[0].id : null;
     console.log('✅ Usuário admin criado/existente');
@@ -51,17 +51,16 @@ async function seed() {
     // Criar endereço de teste
     if (userId) {
       await queryRunner.query(
-        `INSERT INTO addresses (user_id, street, number, neighborhood, city, state, zip, is_default, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
+        `INSERT INTO addresses (user_id, street, number, city, state, zip, is_default, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
          ON CONFLICT DO NOTHING`,
         [
           userId,
           'Rua das Flores',
           '123',
-          'Centro',
-          'São Paulo',
-          'SP',
-          '01310100',
+          'Florianópolis',
+          'SC',
+          '88010100',
           true,
         ],
       );

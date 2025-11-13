@@ -22,8 +22,12 @@ export class OrdersController {
 
   @Post()
   create(@Body() createOrderDto: CreateOrderDto, @Request() req) {
+    console.log('🛒 ORDERS CONTROLLER - POST /orders');
+    console.log('Body original:', JSON.stringify(createOrderDto, null, 2));
+    console.log('JWT user:', req.user);
     // Força usar o userId do token JWT
     createOrderDto.user_id = req.user.userId;
+    console.log('user_id após JWT:', createOrderDto.user_id);
     return this.ordersService.create(createOrderDto);
   }
 

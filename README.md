@@ -1,198 +1,100 @@
-# PedeAI Backend 🍕<p align="center">
+# PedeAI Backend 🍕
 
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+Backend completo para aplicativo de delivery de comida, construído com NestJS, TypeORM e PostgreSQL.
 
-Backend completo para aplicativo de delivery de comida, construído com NestJS, TypeORM e PostgreSQL.</p>
-
-
-
-## 📋 Índice[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 📋 Índice
 
 - [Recursos](#recursos)
+- [Tecnologias](#tecnologias)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação](#instalação)
+- [Configuração](#configuração)
+- [Executando o Projeto](#executando-o-projeto)
+- [Banco de Dados](#banco-de-dados)
+- [Endpoints da API](#endpoints-da-api)
+- [Regras de Negócio](#regras-de-negócio)
+- [Testando com Postman](#testando-com-postman)
+- [Integração com Frontend](#integração-com-frontend)
+- [Estrutura do Projeto](#estrutura-do-projeto)
 
-- [Tecnologias](#tecnologias)  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+## 🚀 Recursos
 
-- [Pré-requisitos](#pré-requisitos)    <p align="center">
-
-- [Instalação](#instalação)<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-
-- [Configuração](#configuração)<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-
-- [Executando o Projeto](#executando-o-projeto)<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-
-- [Banco de Dados](#banco-de-dados)<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-
-- [Endpoints da API](#endpoints-da-api)<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-
-- [Regras de Negócio](#regras-de-negócio)<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-
-- [Testando com Postman](#testando-com-postman)<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-
-- [Integração com Frontend](#integração-com-frontend)  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-
-- [Estrutura do Projeto](#estrutura-do-projeto)    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-
-## 🚀 Recursos</p>
-
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-
-- ✅ Autenticação JWT com bcrypt  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
+- ✅ Autenticação JWT com bcrypt
 - ✅ 5 CRUDs completos (Users, Restaurants, Products, Orders, Addresses)
-
-- ✅ 19+ regras de negócio implementadas## Description
-
+- ✅ 15 regras de negócio implementadas
 - ✅ Validação de dados com class-validator
-
-- ✅ Migrações TypeORM[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
+- ✅ Migrações TypeORM
 - ✅ Seed de dados de exemplo
-
-- ✅ CORS habilitado para React Native## Project setup
-
+- ✅ CORS habilitado para React Native
 - ✅ Coleção Postman incluída
 
-```bash
-
-## 🛠️ Tecnologias$ npm install
-
-```
+## 🛠️ Tecnologias
 
 - **NestJS** - Framework Node.js progressivo
-
-- **TypeORM** - ORM para TypeScript e JavaScript## Compile and run the project
-
+- **TypeORM** - ORM para TypeScript e JavaScript
 - **PostgreSQL** - Banco de dados relacional
-
-- **JWT** - Autenticação via JSON Web Tokens```bash
-
-- **bcrypt** - Hash de senhas# development
-
-- **class-validator** - Validação de DTOs$ npm run start
-
+- **JWT** - Autenticação via JSON Web Tokens
+- **bcrypt** - Hash de senhas
+- **class-validator** - Validação de DTOs
 - **class-transformer** - Transformação de objetos
 
-# watch mode
+## 📦 Pré-requisitos
 
-## 📦 Pré-requisitos$ npm run start:dev
+- Node.js v18+
+- PostgreSQL v14+
+- npm ou yarn
 
+## 💿 Instalação
 
+```powershell
+# Clone o repositório (se aplicável)
+cd C:\Users\isacp\Desktop\pedeai-backend
 
-- Node.js v18+ # production mode
-
-- PostgreSQL v14+$ npm run start:prod
-
-- npm ou yarn```
-
-
-
-## 💿 Instalação## Run tests
-
-
-
-```powershell```bash
-
-# Clone o repositório (se aplicável)# unit tests
-
-cd C:\Users\isacp\Desktop\pedeai-backend$ npm run test
-
-
-
-# Instale as dependências# e2e tests
-
-npm install$ npm run test:e2e
-
+# Instale as dependências
+npm install
 ```
 
-# test coverage
-
-## ⚙️ Configuração$ npm run test:cov
-
-```
+## ⚙️ Configuração
 
 1. **Configure as variáveis de ambiente**
 
-## Deployment
-
 Edite o arquivo `.env` com suas credenciais:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
 ```env
-
-# DatabaseIf you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+# Database
 DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=pedeai_user
+DB_PASSWORD=1234
+DB_DATABASE=pedeai
 
-DB_PORT=5432```bash
-
-DB_USERNAME=pedeai_user$ npm install -g @nestjs/mau
-
-DB_PASSWORD=1234$ mau deploy
-
-DB_DATABASE=pedeai```
-
-
-
-# JWTWith Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
+# JWT
 JWT_SECRET=supersecretjwt
+JWT_EXPIRES_IN=7d
 
-JWT_EXPIRES_IN=7d## Resources
-
-
-
-# ApplicationCheck out a few resources that may come in handy when working with NestJS:
-
+# Application
 PORT=3000
+NODE_ENV=development
+```
 
-NODE_ENV=development- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
+2. **Crie o banco de dados PostgreSQL**
 
-```- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
+```powershell
+# Via psql (PowerShell)
+& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -U postgres -p 5432 -d postgres
 
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-
-2. **Crie o banco de dados PostgreSQL**- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-
-```powershell- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-
-# Via psql (PowerShell)- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -U postgres -p 5432 -d postgres- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-
-
-# Dentro do psql, execute:## Support
-
+# Dentro do psql, execute:
 CREATE DATABASE pedeai;
-
-CREATE ROLE pedeai_user WITH LOGIN PASSWORD '1234';Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
+CREATE ROLE pedeai_user WITH LOGIN PASSWORD '1234';
 ALTER DATABASE pedeai OWNER TO pedeai_user;
-
-\c pedeai## Stay in touch
-
+\c pedeai
 GRANT ALL ON SCHEMA public TO pedeai_user;
-
-\q- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-
-```- Website - [https://nestjs.com](https://nestjs.com/)
-
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+\q
+```
 
 ## 🏃 Executando o Projeto
 
-## License
-
 ### Compilar o projeto
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 ```powershell
 npm run build
@@ -218,10 +120,10 @@ npm run seed
 ```
 
 Isso criará:
-- 1 usuário de teste: `teste@pedeai.com` / senha: `123456`
+- 2 usuários: `teste@pedeai.com` / `admin@pedeai.com` (senha: `123456`)
 - 5 restaurantes com categorias variadas
 - 15 produtos distribuídos entre os restaurantes
-- 1 endereço de exemplo
+- 2 endereços de exemplo em Florianópolis/SC
 
 ### Iniciar o servidor
 
@@ -239,11 +141,11 @@ O servidor estará rodando em `http://localhost:3000`
 
 ### Estrutura de Tabelas
 
-- **users** - Usuários do aplicativo
-- **restaurants** - Restaurantes cadastrados
-- **products** - Produtos/itens de menu
-- **addresses** - Endereços de entrega dos usuários
-- **orders** - Pedidos realizados
+- **users** - Usuários do aplicativo (campos: email, password, name, phone, birth_date, is_admin)
+- **restaurants** - Restaurantes cadastrados (campos: name, category, image, is_active)
+- **products** - Produtos/itens de menu (campos: name, description, price, image, is_available, restaurant_id)
+- **addresses** - Endereços de entrega (campos: street, number, city, state, zip, is_default, user_id)
+- **orders** - Pedidos realizados (campos: user_id, restaurant_id, restaurant_name, items, total, status, address, payment_type)
 - **migrations** - Controle de migrações
 
 ### Diagrama de Relacionamentos
@@ -271,6 +173,7 @@ restaurants 1--* products
 | GET | `/users/:id` | Obter usuário por ID |
 | PATCH | `/users/:id` | Atualizar dados do usuário |
 | DELETE | `/users/:id` | Remover usuário |
+| POST | `/users/change-password` | Alterar senha do usuário logado |
 
 ### Restaurantes (público)
 
@@ -278,9 +181,9 @@ restaurants 1--* products
 |--------|----------|-----------|
 | GET | `/restaurants` | Listar restaurantes ativos |
 | GET | `/restaurants/:id` | Obter restaurante por ID |
-| POST | `/restaurants` | Criar restaurante |
-| PATCH | `/restaurants/:id` | Atualizar restaurante |
-| DELETE | `/restaurants/:id` | Remover restaurante |
+| POST | `/restaurants` | Criar restaurante (requer admin) |
+| PATCH | `/restaurants/:id` | Atualizar restaurante (requer admin) |
+| DELETE | `/restaurants/:id` | Remover restaurante (requer admin) |
 
 ### Produtos (público)
 
@@ -289,9 +192,9 @@ restaurants 1--* products
 | GET | `/products` | Listar todos os produtos |
 | GET | `/products?restaurant_id=1` | Listar produtos de um restaurante |
 | GET | `/products/:id` | Obter produto por ID |
-| POST | `/products` | Criar produto |
-| PATCH | `/products/:id` | Atualizar produto |
-| DELETE | `/products/:id` | Remover produto |
+| POST | `/products` | Criar produto (requer admin) |
+| PATCH | `/products/:id` | Atualizar produto (requer admin) |
+| DELETE | `/products/:id` | Remover produto (requer admin) |
 
 ### Endereços (requer JWT)
 
@@ -315,36 +218,32 @@ restaurants 1--* products
 
 ## 📜 Regras de Negócio
 
-### Autenticação
+### Usuários (5 regras)
 1. **Email único** - Não permitir cadastro duplicado
-2. **Hash de senha** - Senha deve ter hash bcrypt (min 10 rounds)
-3. **Validar senha** - Comparar hash ao fazer login
+2. **Idade mínima** - Usuário deve ter 18 anos ou mais
+3. **Telefone com DDD 48** - Validar formato (48)XXXXXXXXX
+4. **Hash de senha** - Senha deve ter hash bcrypt (min 10 rounds)
+5. **Validar senha** - Comparar hash ao fazer login
 
-### Usuários
-4. **Alterar email** - Validar unicidade ao atualizar
-5. **Alterar senha** - Aplicar hash ao atualizar
+### Endereços (2 regras)
+6. **Endereço padrão único** - Ao marcar como padrão, desmarcar outros do usuário
+7. **CEP de Florianópolis** - Validar que CEP começa com 880 (Florianópolis/SC)
 
-### Restaurantes
-6. **Nome único** - Não permitir nomes duplicados
-7. **Listar ativos** - Listar apenas restaurantes com `is_active = true`
-8. **Validar nome** - Ao atualizar, verificar unicidade
+### Métodos de Pagamento (1 regra)
+8. **Pagamento padrão único** - Ao marcar como padrão, desmarcar outros do usuário
 
-### Produtos
-9. **Restaurante existente** - Produto deve pertencer a restaurante válido
-10. **Produtos disponíveis** - Listar apenas produtos com `is_available = true`
-11. **Validar restaurante** - Ao atualizar, verificar se restaurante existe
+### Restaurantes (1 regra)
+9. **Nome único** - Não permitir nomes duplicados (case-insensitive)
 
-### Endereços
-12. **Endereço padrão único** - Ao marcar como padrão, desmarcar outros do usuário
-13. **Atualizar padrão** - Mesma regra ao atualizar
+### Pedidos (3 regras)
+10. **Valor mínimo** - Pedido deve ter valor mínimo de R$ 50,00
+11. **Restaurante diferente** - Não permitir pedido consecutivo do mesmo restaurante
+12. **Limite diário** - Máximo de 3 pedidos por dia por usuário
 
-### Pedidos
-14. **Validar usuário** - Usuário deve existir ao criar pedido
-15. **Restaurante ativo** - Restaurante deve existir e estar ativo
-16. **Produtos do restaurante** - Todos produtos devem pertencer ao mesmo restaurante e estar disponíveis
-17. **Validar total** - Recalcular e validar total do pedido
-18. **Transições de status** - Validar fluxo: pending → confirmed → preparing → delivering → delivered (cancelled permitido até delivering)
-19. **Não deletar finalizados** - Não permitir deletar pedidos confirmados ou finalizados
+### Produtos (3 regras)
+13. **Nome único por restaurante** - Não permitir produtos com mesmo nome no mesmo restaurante
+14. **Preço mínimo** - Produto deve ter preço mínimo de R$ 10,00
+15. **Limite diário de criação** - Máximo de 3 produtos criados por dia por restaurante
 
 ## 🧪 Testando com Postman
 
@@ -364,13 +263,14 @@ restaurants 1--* products
 
 - ✅ Registro e login de usuários
 - ✅ CRUD completo de todas entidades
-- ✅ Casos de erro (credenciais inválidas, email duplicado, total inválido, transições de status inválidas)
+- ✅ Validações de regras de negócio
+- ✅ Casos de erro (credenciais inválidas, email duplicado, validações falhando)
 
 ## 🔗 Integração com Frontend
 
 ### Configurar URL base no React Native
 
-No arquivo `src/api/api.ts` do frontend:
+No arquivo `src/services/ApiService.ts` do frontend:
 
 ```typescript
 const API_BASE_URL = 'http://localhost:3000'; // Desenvolvimento
@@ -392,20 +292,14 @@ const API_BASE_URL = 'http://SEU_IP:3000'; // Para testar no device
 
 ```typescript
 // Login
-const response = await fetch(`${API_BASE_URL}/auth/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password }),
-});
-const { access_token } = await response.json();
+const response = await api.post('/auth/login', { email, password });
+const { access_token, isAdmin } = response.data;
 
-// Usar token em requests protegidos
-const response = await fetch(`${API_BASE_URL}/orders/my`, {
-  headers: { 
-    'Authorization': `Bearer ${access_token}`,
-    'Content-Type': 'application/json'
-  },
-});
+// Salvar token
+setAuthToken(access_token);
+
+// Usar token em requests protegidos (automático com ApiService)
+const response = await api.get('/orders/my');
 ```
 
 ### Tratamento de Erros
@@ -415,7 +309,7 @@ O backend retorna erros estruturados:
 ```json
 {
   "statusCode": 400,
-  "message": "Credenciais inválidas",
+  "message": "Você já fez um pedido neste restaurante. Escolha outro!",
   "error": "Bad Request"
 }
 ```
@@ -462,6 +356,15 @@ Para dúvidas ou problemas:
 2. Confirme que o PostgreSQL está rodando
 3. Valide as variáveis de ambiente no `.env`
 4. Teste os endpoints com a coleção do Postman
+5. Certifique-se de que as migrações foram executadas
+
+## 📝 Notas de Desenvolvimento
+
+- O projeto usa migrações do TypeORM (não sincronização automática)
+- Todos os console.logs em `orders.service.ts` são para debugging e podem ser removidos em produção
+- O campo `neighborhood` e `complement` foram removidos dos endereços
+- A validação de telefone aceita apenas DDD 48 (Florianópolis)
+- A validação de CEP aceita apenas códigos de Florianópolis (880XXXXX)
 
 ## 📝 Licença
 

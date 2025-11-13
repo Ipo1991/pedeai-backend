@@ -277,7 +277,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"user_id\": 1,\n  \"street\": \"Rua das Flores\",\n  \"number\": \"123\",\n  \"complement\": \"Apto 45\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"state\": \"SP\",\n  \"zip\": \"01310100\",\n  \"is_default\": true\n}"
+              "raw": "{\n  \"user_id\": 1,\n  \"street\": \"Rua das Flores\",\n  \"number\": \"123\",\n  \"city\": \"Florianópolis\",\n  \"state\": \"SC\",\n  \"zip\": \"88010100\",\n  \"is_default\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/addresses",
