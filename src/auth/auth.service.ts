@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -33,17 +34,57 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
   
-    const normalizePhone = (phone?: string) =>
-      phone ? phone.replace(/\D/g, '') : undefined;
+    const normalizePhone = (phone?: string) => {
+      if (!phone) return undefined;
+      const cleaned = phone.replace(/\D/g, '');
+      
+      // Validar formato do telefone (deve ter 10 ou 11 dígitos)
+      if (cleaned.length < 10 || cleaned.length > 11) {
+        throw new BadRequestException('Telefone deve ter 10 ou 11 dígitos');
+      }
+      
+      // Validar DDD (deve ser 48)
+      if (!cleaned.startsWith('48')) {
+        throw new BadRequestException('Apenas telefones com DDD 48 são aceitos');
+      }
+      
+      return cleaned;
+    };
+    
     const normalizeBirthDate = (birth?: string) => {
       if (!birth) return undefined;
-     
+      
+      let birthDate: Date | null = null;
+      let isoDate: string | undefined = undefined;
+      
+      // Se vier no formato dd/MM/yyyy
       if (/^\d{2}\/\d{2}\/\d{4}$/.test(birth)) {
         const [d, m, y] = birth.split('/');
-        return `${y}-${m}-${d}`; 
+        isoDate = `${y}-${m}-${d}`;
+        birthDate = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
       }
-      if (/^\d{4}-\d{2}-\d{2}$/.test(birth)) return birth; 
-      return undefined; 
+      // Se vier no formato yyyy-MM-dd
+      else if (/^\d{4}-\d{2}-\d{2}$/.test(birth)) {
+        isoDate = birth;
+        const [y, m, d] = birth.split('-');
+        birthDate = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+      }
+      
+      // Validar idade mínima de 18 anos
+      if (birthDate) {
+        const today = new Date();
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        const dayDiff = today.getDate() - birthDate.getDate();
+        
+        const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
+        
+        if (actualAge < 18) {
+          throw new BadRequestException('Você deve ter no mínimo 18 anos');
+        }
+      }
+      
+      return isoDate;
     };
 
     const user = this.userRepository.create({

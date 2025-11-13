@@ -8,6 +8,7 @@ import {
   UseGuards,
   Request,
   ParseIntPipe,
+  Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -20,7 +21,11 @@ export class UsersController {
 
   @Get('profile')
   async getProfile(@Request() req) {
+    console.log('=== GET PROFILE ===');
+    console.log('req.user:', req.user);
+    console.log('userId:', req.user.userId);
     const user = await this.usersService.findOne(req.user.userId);
+    console.log('User found:', { id: user.id, email: user.email, isAdmin: user.isAdmin });
     const { password, ...result } = user;
     return result;
   }
@@ -40,6 +45,12 @@ export class UsersController {
     const user = await this.usersService.update(id, updateUserDto);
     const { password, ...result } = user;
     return result;
+  }
+
+  @Post('change-password')
+  async changePassword(@Request() req, @Body() body: { currentPassword: string; newPassword: string }) {
+    await this.usersService.changePassword(req.user.userId, body.currentPassword, body.newPassword);
+    return { message: 'Senha alterada com sucesso' };
   }
 
   @Delete(':id')

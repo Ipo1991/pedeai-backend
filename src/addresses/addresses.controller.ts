@@ -23,13 +23,13 @@ export class AddressesController {
   @Post()
   create(@Body() createAddressDto: CreateAddressDto, @Request() req) {
     // Força usar o userId do token JWT
-    createAddressDto.user_id = req.user.userId;
+    createAddressDto.user_id = req.user.sub;
     return this.addressesService.create(createAddressDto);
   }
 
   @Get('my')
   findMy(@Request() req) {
-    return this.addressesService.findByUser(req.user.userId);
+    return this.addressesService.findByUser(req.user.sub);
   }
 
   @Get(':id')

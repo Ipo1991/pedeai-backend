@@ -23,12 +23,6 @@ export class Address {
   @Column()
   number: string;
 
-  @Column({ nullable: true })
-  complement: string;
-
-  @Column()
-  neighborhood: string;
-
   @Column()
   city: string;
 

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Address } from './entities/address.entity';
@@ -24,8 +24,28 @@ export class AddressesService {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    // Regra 12: Se marcar como padrão, desmarcar outros endereços do usuário
-    if (createAddressDto.is_default) {
+   
+    const existingAddresses = await this.addressRepository.find({
+      where: { user: { id: user.id } },
+    });
+
+    // Regra de negócio número 4: Máximo de 2 endereços por conta
+    if (existingAddresses.length >= 2) {
+      throw new BadRequestException('Você já possui o máximo de 2 endereços cadastrados');
+    }
+
+    // Regra de negócio número 5: Não pode usar o mesmo CEP
+    const cepExists = existingAddresses.some(addr => addr.zip === createAddressDto.zip);
+    if (cepExists) {
+      throw new ConflictException('Já existe um endereço cadastrado com este CEP');
+    }
+
+    // Regra de negócio número 6: Primeiro endereço sempre é padrão, ou força como padrão se solicitado
+    const isFirstAddress = existingAddresses.length === 0;
+    const shouldBeDefault = isFirstAddress || createAddressDto.is_default;
+
+    // Se for definir como padrão, desmarcar outros
+    if (shouldBeDefault) {
       await this.addressRepository.update(
         { user: { id: user.id }, isDefault: true },
         { isDefault: false },
@@ -35,12 +55,10 @@ export class AddressesService {
     const address = this.addressRepository.create({
       street: createAddressDto.street,
       number: createAddressDto.number,
-      complement: createAddressDto.complement,
-      neighborhood: createAddressDto.neighborhood,
       city: createAddressDto.city,
       state: createAddressDto.state,
       zip: createAddressDto.zip,
-      isDefault: !!createAddressDto.is_default,
+      isDefault: shouldBeDefault,
       user,
     });
 
@@ -69,47 +87,76 @@ export class AddressesService {
 
   async update(id: number, updateAddressDto: UpdateAddressDto): Promise<Address> {
     const address = await this.findOne(id);
-    
-    console.log('🔄 Updating address:', id);
-    console.log('📦 Update data:', updateAddressDto);
-    console.log('📍 Current address isDefault:', address.isDefault);
 
-    // Regra 13: Ao definir como padrão, desmarcar outros do mesmo usuário
+    const userAddresses = await this.addressRepository.find({
+      where: { user: { id: address.user.id } },
+    });
+
+    // REGRA 5: Não pode usar o mesmo CEP no update
+    if (updateAddressDto.zip && updateAddressDto.zip !== address.zip) {
+      const cepExists = userAddresses.some(
+        addr => addr.id !== id && addr.zip === updateAddressDto.zip
+      );
+      if (cepExists) {
+        throw new ConflictException('Já existe um endereço cadastrado com este CEP');
+      }
+    }
+
+    // REGRA 6: Deve ter pelo menos um endereço padrão no update
+    if (updateAddressDto.is_default === false && address.isDefault) {
+      const otherDefaultExists = userAddresses.some(
+        addr => addr.id !== id && addr.isDefault
+      );
+      if (!otherDefaultExists) {
+        throw new BadRequestException('Você precisa ter pelo menos um endereço padrão. Marque outro endereço como padrão antes de desmarcar este.');
+      }
+    }
+
     if (updateAddressDto.is_default === true) {
-      console.log('✅ Marking as default, will unmark others');
-      // Busca todos os endereços padrão do usuário e desmarca
       const otherAddresses = await this.addressRepository.find({
         where: { user: { id: address.user.id }, isDefault: true },
       });
       
-      console.log('📋 Found default addresses:', otherAddresses.length);
-      
       for (const otherAddress of otherAddresses) {
         if (otherAddress.id !== id) {
-          console.log('❌ Unmarking address:', otherAddress.id);
           otherAddress.isDefault = false;
           await this.addressRepository.save(otherAddress);
         }
       }
     }
 
-    // Mapear campos explicitamente e converter is_default -> isDefault
     if (updateAddressDto.street !== undefined) address.street = updateAddressDto.street;
     if (updateAddressDto.number !== undefined) address.number = updateAddressDto.number;
-    if (updateAddressDto.complement !== undefined) address.complement = updateAddressDto.complement;
-    if (updateAddressDto.neighborhood !== undefined) address.neighborhood = updateAddressDto.neighborhood;
     if (updateAddressDto.city !== undefined) address.city = updateAddressDto.city;
     if (updateAddressDto.state !== undefined) address.state = updateAddressDto.state;
     if (updateAddressDto.zip !== undefined) address.zip = updateAddressDto.zip;
     if (updateAddressDto.is_default !== undefined) address.isDefault = !!updateAddressDto.is_default;
 
-    const saved = await this.addressRepository.save(address);
-    console.log('💾 Address saved with isDefault:', saved.isDefault);
-    return saved;
+    return this.addressRepository.save(address);
   }
 
   async remove(id: number): Promise<void> {
     const address = await this.findOne(id);
+    
+    // REGRA 6: Deve ter pelo menos um endereço padrão
+    if (address.isDefault) {
+      const userAddresses = await this.addressRepository.find({
+        where: { user: { id: address.user.id } },
+      });
+      
+      if (userAddresses.length === 1) {
+        throw new BadRequestException('Você precisa ter pelo menos um endereço cadastrado');
+      }
+      
+      const otherDefaultExists = userAddresses.some(
+        addr => addr.id !== id && addr.isDefault
+      );
+      
+      if (!otherDefaultExists) {
+        throw new BadRequestException('Marque outro endereço como padrão antes de excluir este');
+      }
+    }
+    
     await this.addressRepository.remove(address);
   }
 }

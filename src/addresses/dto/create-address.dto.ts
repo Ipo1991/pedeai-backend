@@ -5,6 +5,7 @@ import {
   IsBoolean,
   Length,
   IsInt,
+  Matches,
 } from 'class-validator';
 
 export class CreateAddressDto {
@@ -21,14 +22,6 @@ export class CreateAddressDto {
   @IsNotEmpty({ message: 'Número é obrigatório' })
   number: string;
 
-  @IsOptional()
-  @IsString()
-  complement?: string;
-
-  @IsString()
-  @IsNotEmpty({ message: 'Bairro é obrigatório' })
-  neighborhood: string;
-
   @IsString()
   @IsNotEmpty({ message: 'Cidade é obrigatória' })
   city: string;
@@ -39,8 +32,8 @@ export class CreateAddressDto {
   state: string;
 
   @IsString()
-  @Length(8, 8, { message: 'CEP deve ter 8 dígitos' })
   @IsNotEmpty({ message: 'CEP é obrigatório' })
+  @Matches(/^\d{8}$/, { message: 'CEP deve ter 8 dígitos numéricos' })
   zip: string;
 
   @IsOptional()
